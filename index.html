@@ -4,36 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
-    <link ref="Stylesheet" src="styles.css">
+    <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
 <body>
     <div id="mainDiv">
-        <div id="historyDiv"></div>
-        <div id="currentDiv"></div>
+        <div id="historyDiv"><p>0</p></div>
+        <div id="currentDiv"><p>0</p></div>
         <div id="buttonDiv">
-            <div class="buttonRow">
-                <button id="clear">C</button>
-                <button id="para">()</button>
-                <button id="percent">%</button>
-                <button id="divide">&divide;</button>
+            <div class="buttonDiv">
+                <button class="mod" id="clear">C</button>
+                <button class="mod" id="para">()</button>
+                <button class="operator" id="percent">%</button>
+                <button class="operator"id="divide">&divide;</button>
             </div>
-            <div class="buttonRow">                
-                <button id="7">7</button>
-                <button id="8">8</button>
-                <button id="9">9</button>
-                <button id="multiply">x</button>
+            <div class="buttonDiv">                
+                <button class="num">9</button>
+                <button class="num">8</button>
+                <button class="num">7</button>
+                <button class="operator" id="multiply">x</button>
             </div>
-            <div class="buttonRow">                
-                <button id="4">4</button>
-                <button id="5">5</button>
-                <button id="6">6</button>
-                <button id="subtract">-</button></div>
-            <div class="buttonRow">                
-                <button id="posNeg">+/-</button>
-                <button id="0">0</button>
-                <button id="decimal">.</button>
-                <button id="equals">=</button>
+            <div class="buttonDiv">                
+                <button class="num">6</button>
+                <button class="num">5</button>
+                <button class="num">4</button>
+                <button class="operator" id="subtract">-</button>
+            </div>
+            <div class="buttonDiv">                
+                <button class="num">3</button>
+                <button class="num">2</button>
+                <button class="num">1</button>
+                <button class="operator" id="add">+</button>
+            </div>
+            <div class="buttonDiv">                
+                <button class="mod" id="posNeg">+/-</button>
+                <button class="num">0</button>
+                <button class="mod" id="decimal">.</button>
+                <button class="mod" id="equals">=</button>
             </div>
 
         </div>
