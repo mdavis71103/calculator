@@ -76,7 +76,7 @@ function calculate(equation){
     console.log(equation);
 
     arr = equation.split(" ")
-
+    console.log(arr)
     while (arr.length > 1){
         arr = nextInOrder(arr)
     }
@@ -91,14 +91,14 @@ function nextInOrder(arr) {
 
     
     //Multiplication and Division
-    let index = arr.findIndex(op => op === "&divide;" || op === "x")
+    let index = arr.findIndex(op => op === "÷" || op === "x")
     if(index != -1) {
         
         let next = arr.slice(index -1, index + 2)
-
+        console.log(next[1])
         if(next[1] === "x"){
             total = next[0]*next[2]
-        }else if (next[1] === "&divide;"){
+        }else if (next[1] === "÷"){
             total = next[0]/next[2]
         } else alert(`There has been an issue with ${next[1]}`)
         
