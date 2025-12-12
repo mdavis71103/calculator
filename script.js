@@ -52,6 +52,35 @@ buttons.forEach((button) => {
                     break;
 
                 case "()":
+                    //If first (
+                    //If after opening (
+
+                    //If no operator before x(
+                    // ( = 0 or ( = )
+                    //If after number and opening )
+                    //( > )
+
+                    if (curr === "0") {
+                        curr = "( "
+                    } else {
+                        let arr = curr.split(" ").filter(item => item !== "");
+                        if(arr.at(-1) ==="(") {
+                        //Needs to check last char in last array position
+                            curr += " ( ";
+                        }else {
+                            const open = arr.reduce((total, value) => (value === "(" ? total + 1 : total), 0);
+                            const close = arr.reduce((total, value) => (value === ")" ? total + 1 : total), 0);
+                            console.log(`open = ${open} close = ${close}`)
+                            if(open > close){
+                                curr += " ) ";
+                            }
+                            else {
+                                curr += " x ( ";
+                            }
+                        }
+                    }
+                    currentDisplay.textContent = curr;
+                    break;
 
                 case "%":
 
