@@ -52,14 +52,13 @@ buttons.forEach((button) => {
                     break;
 
                 case "()":
+                    console.log("()")
                     //If first (
                     //If after opening (
-
                     //If no operator before x(
                     // ( = 0 or ( = )
                     //If after number and opening )
                     //( > )
-
                     if (curr === "0") {
                         curr = "( "
                     } else {
@@ -87,7 +86,14 @@ buttons.forEach((button) => {
                 case "+/-":
 
                 case ".":
+                    // if (){
 
+                    // }else if(curr === "0") {
+                    //     curr = "0."
+                    // } else {
+                    //     curr += func;
+                    // }
+                    // currentDisplay.textContent = curr;
                 case "=":
                     hx = curr
                     historyDisplay.textContent = curr;
