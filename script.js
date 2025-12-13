@@ -2,7 +2,8 @@
 
 //declaring elements
 let hx = "0"
-let curr = "0"
+let curr = []
+
 
 //declaring buttons and Displays
 
@@ -16,22 +17,24 @@ buttons.forEach((button) => {
     if(button.className === "num"){
         button.addEventListener("click", function() {
             let func = button.textContent;
-            if (curr === "0") {
-                curr = func
+            if (curr.length === 0 || !Number.isFinite(Number(curr[curr.length-1]))) {
+                curr.push(func);
             } else {
-                curr += func;
+                let num = curr.pop();
+                num += func;
+                curr.push(num);
             }
-            currentDisplay.textContent = curr;
+            displayCurr();
         })
     } else if (button.className === "operator") {
         button.addEventListener("click", function(){
             let func = button.textContent;
-            if (curr === "0") {
+            if (curr.length === 0) {
                 alert("invalid format used")
             } else {
-                curr += ` ${func} `;
+                curr.push(func);
             }
-            currentDisplay.textContent = curr;
+            displayCurr();
 
             //unsure if I'll need to use the switch function
             // switch(button.textContent) {
@@ -45,8 +48,8 @@ buttons.forEach((button) => {
         button.addEventListener("click", function(){
             switch (button.textContent) {
                 case "C": 
-                    curr = "0";
-                    currentDisplay.textContent = curr;
+                    curr = [];
+                    currentDisplay.textContent = "0";
                     hx = "0";
                     historyDisplay.textContent = hx;
                     break;
@@ -89,10 +92,10 @@ buttons.forEach((button) => {
                 case ".":
 
                 case "=":
-                    hx = curr
-                    historyDisplay.textContent = curr;
+                    hx = curr.join(" ")
+                    historyDisplay.textContent = hx;
                     curr = calculate(curr)
-                    currentDisplay.textContent = curr;
+                    displayCurr();
                 default: 
                     console.log(button.textContent);
             }   
@@ -100,12 +103,14 @@ buttons.forEach((button) => {
     };
 })
 
-function calculate(equation){
-    //Takes string and returns answer
-    console.log(equation);
+function displayCurr(){
+    let display = curr.join(" ");
+    currentDisplay.textContent = display;
+}
 
-    arr = equation.split(" ")
-    console.log(arr)
+function calculate(arr){
+    //Takes arr and returns answer
+
     while (arr.length > 1){
         arr = nextInOrder(arr)
     }
