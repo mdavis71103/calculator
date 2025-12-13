@@ -17,7 +17,10 @@ buttons.forEach((button) => {
     if(button.className === "num"){
         button.addEventListener("click", function() {
             let func = button.textContent;
-            if (curr.length === 0 || !Number.isFinite(Number(curr[curr.length-1]))) {
+            if (curr.length === 0 || 
+                (!Number.isFinite(Number(curr[curr.length-1])) &&
+                !curr.at(-1).at(-1) === "(")
+            ) {
                 curr.push(func);
             } else {
                 let num = curr.pop();
@@ -35,14 +38,6 @@ buttons.forEach((button) => {
                 curr.push(func);
             }
             displayCurr();
-
-            //unsure if I'll need to use the switch function
-            // switch(button.textContent) {
-            //     case "&divide;": 
-            //     case "x":
-            //     case "-":
-            //     case "+":
-            // }
         })
     } else if(button.className === "mod") {
         button.addEventListener("click", function(){
@@ -63,26 +58,25 @@ buttons.forEach((button) => {
                     //If after number and opening )
                     //( > )
 
-                    if (curr === "0") {
-                        curr = "( "
+                    if (curr.length === 0) {
+                        curr.push("(");
                     } else {
-                        let arr = curr.split(" ").filter(item => item !== "");
-                        if(arr.at(-1) ==="(") {
+                        if(curr.at(-1).at(-1) === "(") {
                         //Needs to check last char in last array position
-                            curr += " ( ";
+                            curr[curr.length-1] += "(";
                         }else {
-                            const open = arr.reduce((total, value) => (value === "(" ? total + 1 : total), 0);
-                            const close = arr.reduce((total, value) => (value === ")" ? total + 1 : total), 0);
-                            console.log(`open = ${open} close = ${close}`)
+                            const open = countOccurances(curr, "(");
+                            const close = countOccurances(curr, ")");
                             if(open > close){
-                                curr += " ) ";
+                                curr[curr.length-1] += ")";
                             }
                             else {
-                                curr += " x ( ";
+                                curr.push("x");
+                                curr.push("(")
                             }
                         }
                     }
-                    currentDisplay.textContent = curr;
+                    displayCurr();
                     break;
 
                 case "%":
@@ -156,4 +150,16 @@ function nextInOrder(arr) {
         return arr;
     }
 
+}
+
+function countOccurances(arr, char){
+    
+    let total = 0
+
+    arr.forEach(e => {
+        let arr = e.split(char)
+        total += (arr.length - 1)
+    })
+
+    return total;
 }
