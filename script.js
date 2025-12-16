@@ -19,7 +19,7 @@ buttons.forEach((button) => {
             let func = button.textContent;
             if (curr.length === 0 || 
                 (!Number.isFinite(Number(curr[curr.length-1])) &&
-                !curr.at(-1).at(-1) === "(")
+                curr.at(-1).at(0) != "(")
             ) {
                 curr.push(func);
             } else {
@@ -50,29 +50,24 @@ buttons.forEach((button) => {
                     break;
 
                 case "()":
-                    console.log("()")
-                    //If first (
-                    //If after opening (
-                    //If no operator before x(
-                    // ( = 0 or ( = )
-                    //If after number and opening )
-                    //( > )
-
+                    //Decides when to use ( or )
                     if (curr.length === 0) {
                         curr.push("(");
                     } else {
                         if(curr.at(-1).at(-1) === "(") {
-                        //Needs to check last char in last array position
                             curr[curr.length-1] += "(";
+                        }else if (!Number.isFinite(Number(curr.at(-1))) &&
+                             curr.at(-1).at(-1) != ")") {
+                                 curr.push("x");
+                                 curr.push("(");
                         }else {
                             const open = countOccurances(curr, "(");
                             const close = countOccurances(curr, ")");
                             if(open > close){
                                 curr[curr.length-1] += ")";
-                            }
-                            else {
+                            } else {
                                 curr.push("x");
-                                curr.push("(")
+                                curr.push("(");
                             }
                         }
                     }
@@ -112,6 +107,19 @@ function displayCurr(){
 function calculate(arr){
     //Takes arr and returns answer
 
+    //Seperate multiple parentheses without altering display
+    for(let i = 0; i < arr.length; i++){
+        let e = arr[i];
+         if(e.includes("((")) {
+             e = e.replace("((", "( (").split(" ");
+             arr.splice(i, 1, ...e);
+         } else if (e.includes("))")) {
+             e = e.replace("))", ") )").split(" ");
+             arr.splice(i, 1, ...e);
+         }
+    }
+
+    //Calculates one step at a time to ensure Order is followed
     while (arr.length > 1){
         arr = nextInOrder(arr)
     }
@@ -124,9 +132,17 @@ function nextInOrder(arr) {
 
     let total = 0
 
+    //Parentheses
+    //find innermost set in parentheses and send it back throguh this function
+
+    let index = arr.findIndex(op => op.toString().at(0) ==="(") 
+    if (index != -1){ 
+        parentheses(arr, index);
+        return arr;
+    }
     
     //Multiplication and Division
-    let index = arr.findIndex(op => op === "÷" || op === "x")
+    index = arr.findIndex(op => op === "÷" || op === "x")
     if(index != -1) {
         
         let next = arr.slice(index -1, index + 2)
@@ -164,9 +180,41 @@ function countOccurances(arr, char){
     let total = 0
 
     arr.forEach(e => {
-        let arr = e.split(char)
-        total += (arr.length - 1)
+        let splitArr = e.toString().split(char)
+        total += (splitArr.length - 1)
     })
 
     return total;
+}
+
+function parentheses(arr, index){
+
+   
+        let end = 0;
+        while(end === 0){
+            for(let i = index + 1; i < arr.length; i++){
+                if(arr[i].at(0) === "("){
+                    parentheses(arr, i)
+                }else if(arr[i].at(-1) === ")") {
+                    end = i;
+                    break;
+                }
+            }
+            if(end === 0 ){arr.push(")")};
+        }
+        let nextArr = arr.slice(index, end + 1);
+        let nextArrEnd = nextArr.length - 1;
+
+        //Remove paraentheses and blank elements
+        nextArr[0] = nextArr[0].replace("(", "");
+        nextArr[nextArrEnd] = nextArr[nextArrEnd].replace(")", "");
+        nextArr = nextArr.filter(e => e != "");
+
+        //Run until one number remains
+        while(nextArr.length > 1){
+            nextArr = nextInOrder(nextArr);
+        }
+
+        arr.splice(index, (end - index)+1, nextArr[0].toString());
+        return arr;
 }
