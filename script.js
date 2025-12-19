@@ -1,8 +1,11 @@
 /* Script */
 
 //declaring elements
-let hx = "0"
-let curr = []
+let hx, curr, workingNum, operators;
+
+hx = "0";
+curr = [];
+operators = ["+", "-", "x", "÷", "(", ")"];
 
 
 //declaring buttons and Displays
@@ -75,18 +78,62 @@ buttons.forEach((button) => {
                     break;
 
                 case "%":
+                    workingNum = curr.pop();
+
+                    if (workingNum === undefined || 
+                        workingNum === "0" || 
+                        operators.includes(workingNum)){
+                            curr.push(workingNum)
+                            alert("Invalid Function")
+                            break;
+                    }else {
+                        curr.push(workingNum + "%")
+                    }
+                    
+                    displayCurr();
+                    break;
 
                 case "+/-":
 
-                case ".":
-                    // if (){
+                    //Check if element can become negative
+                    if(operators.includes(curr.at(-1)) || 
+                    curr.at(-1) === "0" || 
+                    curr.length === 0) {
+                        alert("Invalid Function");
+                        break;
+                    } 
+                    
+                    workingNum = curr.pop();
 
-                    // }else if(curr === "0") {
-                    //     curr = "0."
-                    // } else {
-                    //     curr += func;
-                    // }
-                    // currentDisplay.textContent = curr;
+                    //Check if number is negative
+                    if(workingNum.at(0) === "-"){
+                        
+                        curr.push(workingNum.replace("-", ""));
+                        displayCurr();
+                        break;
+                    }
+
+                    //Makes last element negative
+                    curr.push("-" + workingNum);
+                    displayCurr();
+                    break;
+
+                case ".":
+                    workingNum = curr.pop();
+
+                    if (workingNum === undefined || workingNum === "0"){
+                        curr.push("0.")
+                    } else if(workingNum.at(-1) === ")"){
+                        curr.push(workingNum)
+                        alert("Invalid Function")
+                        break;
+                    }else if(operators.includes(workingNum)){
+                        curr.push(workingNum, "0.")
+                    }else {curr.push(workingNum + ".")}
+                    
+                    displayCurr();
+                    break;
+
                 case "=":
                     hx = curr.join(" ")
                     historyDisplay.textContent = hx;
@@ -100,12 +147,17 @@ buttons.forEach((button) => {
 })
 
 function displayCurr(){
-    let display = curr.join(" ");
+    
+    let display;
+    if(curr.length > 1){display = curr.join(" ");}
+    else {display = curr;}
     currentDisplay.textContent = display;
 }
 
 function calculate(arr){
     //Takes arr and returns answer
+    let total;
+    total = []
 
     //Seperate multiple parentheses without altering display
     for(let i = 0; i < arr.length; i++){
@@ -119,23 +171,23 @@ function calculate(arr){
          }
     }
 
-    //Calculates one step at a time to ensure Order is followed
+    //Calculates one step at a time to ensure Order of Operations is followed
     while (arr.length > 1){
         arr = nextInOrder(arr)
     }
 
-    return arr;
+    total.push(String(arr));
+    return total;
 }
 
 function nextInOrder(arr) {
     //Takes an array and does the next step in order of operations.
+    let index, total;
 
-    let total = 0
+    total = 0
 
     //Parentheses
-    //find innermost set in parentheses and send it back throguh this function
-
-    let index = arr.findIndex(op => op.toString().at(0) ==="(") 
+    index = arr.findIndex(op => op.toString().at(0) ==="(") 
     if (index != -1){ 
         parentheses(arr, index);
         return arr;
@@ -176,7 +228,9 @@ function nextInOrder(arr) {
 }
 
 function countOccurances(arr, char){
-    
+//For finding which parentheses to use
+//Takes array and char to count
+//Returns total of char in array
     let total = 0
 
     arr.forEach(e => {
@@ -188,9 +242,14 @@ function countOccurances(arr, char){
 }
 
 function parentheses(arr, index){
+//Takes full array and the index from where parentheses was found
+//Calculates total inside parentheses, recalling this function if nested is found
+//returns array with total spliced in
 
-   
-        let end = 0;
+    let end, nextArr, nextArrEnd;
+
+        //Finds slice of array inside paraentheses, if nested is found, recall with nested 
+        end = 0;
         while(end === 0){
             for(let i = index + 1; i < arr.length; i++){
                 if(arr[i].at(0) === "("){
@@ -202,10 +261,10 @@ function parentheses(arr, index){
             }
             if(end === 0 ){arr.push(")")};
         }
-        let nextArr = arr.slice(index, end + 1);
-        let nextArrEnd = nextArr.length - 1;
+        nextArr = arr.slice(index, end + 1);
+        nextArrEnd = nextArr.length - 1;
 
-        //Remove paraentheses and blank elements
+        //Remove paraentheses
         nextArr[0] = nextArr[0].replace("(", "");
         nextArr[nextArrEnd] = nextArr[nextArrEnd].replace(")", "");
         nextArr = nextArr.filter(e => e != "");
@@ -215,6 +274,7 @@ function parentheses(arr, index){
             nextArr = nextInOrder(nextArr);
         }
 
+        //splice and return
         arr.splice(index, (end - index)+1, nextArr[0].toString());
         return arr;
 }
