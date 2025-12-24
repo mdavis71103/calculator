@@ -84,7 +84,7 @@ buttons.forEach((button) => {
                         workingNum === "0" || 
                         operators.includes(workingNum)){
                             curr.push(workingNum)
-                            alert("Invalid Function")
+                            alert("Invalid Format Used")
                             break;
                     }else {
                         curr.push(workingNum + "%")
@@ -147,8 +147,8 @@ buttons.forEach((button) => {
 })
 
 function displayCurr(){
-    
     let display;
+    
     if(curr.length > 1){display = curr.join(" ");}
     else {display = curr;}
     currentDisplay.textContent = display;
@@ -172,8 +172,8 @@ function calculate(arr){
     }
 
     //Calculates one step at a time to ensure Order of Operations is followed
-    while (arr.length > 1){
-        arr = nextInOrder(arr)
+    while (arr.length > 1 || arr.at(-1).at(-1) === "%"){
+        arr = nextInOrder(arr);
     }
 
     total.push(String(arr));
@@ -182,7 +182,7 @@ function calculate(arr){
 
 function nextInOrder(arr) {
     //Takes an array and does the next step in order of operations.
-    let index, total;
+    let index, total, next;
 
     total = 0
 
@@ -192,12 +192,40 @@ function nextInOrder(arr) {
         parentheses(arr, index);
         return arr;
     }
+
+    //percent
+    index = arr.findIndex(op => op.toString().at(-1) === "%")
+    if(index != -1){
+        if(arr.length === 1){
+            console.log("Percent")
+            workingNum = arr.pop();
+            workingNum = workingNum.replace("%", "");
+            workingNum = workingNum * 0.1;
+            arr.push(workingNum.toString());
+            return arr;
+        }else{
+            switch(arr.at(-1)){
+                case "+":
+                    console.log("Plus");
+                    return arr;
+                case "-":
+                    console.log("Minus");
+                    return arr;
+                case "x":
+                    console.log("Multiply");
+                    return arr;
+                case "÷":
+                    console.log("Divide");
+                    return arr;
+            }
+        }
+    }
     
     //Multiplication and Division
     index = arr.findIndex(op => op === "÷" || op === "x")
     if(index != -1) {
         
-        let next = arr.slice(index -1, index + 2)
+        next = arr.slice(index -1, index + 2)
         console.log(next[1])
         if(next[1] === "x"){
             total = next[0]*next[2]
