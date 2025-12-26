@@ -14,137 +14,161 @@ const historyDisplay = document.querySelector("#historyDiv p");
 const currentDisplay = document.querySelector("#currentDiv p");
 const buttons = document.querySelectorAll("button");
 
-//Assign Event Listeners to Buttons
-buttons.forEach((button) => {
 
-    if(button.className === "num"){
-        button.addEventListener("click", function() {
-            func = button.textContent;
-            if (curr.length === 0 || 
-                (!Number.isFinite(Number(curr[curr.length-1])) &&
-                curr.at(-1).at(0) != "(")
-            ) {
-                curr.push(func);
-            } else {
-                let num = curr.pop();
-                num += func;
-                curr.push(num);
-            }
-            displayCurr();
-        })
-    } else if (button.className === "operator") {
-        button.addEventListener("click", function(){
-            func = button.textContent;
-            if (curr.length === 0 || operators.includes(curr.at(-1))) {
-                alert("invalid format used")
-            } else {
-                curr.push(func);
-            }
-            displayCurr();
-        })
-    } else if(button.className === "mod") {
-        button.addEventListener("click", function(){
-            switch (button.textContent) {
-                case "C": 
-                    curr = [];
-                    currentDisplay.textContent = "0";
-                    hx = "0";
-                    historyDisplay.textContent = hx;
-                    break;
+//Declaring functions
+function addButtonEventListeners(){
+    //Assign Event Listeners to Buttons
+    buttons.forEach((button) => {
 
-                case "()":
-                    //Decides when to use ( or )
-                    if (curr.length === 0) {
+        if(button.className === "num"){
+            button.addEventListener("click", function() {
+                func = button.textContent;
+                addNumber(func);
+            })
+        } else if (button.className === "operator") {
+            button.addEventListener("click", function(){
+                func = button.textContent;
+                addOperator(func);
+            })
+        } else if(button.className === "mod") {
+            button.addEventListener("click", function(){
+                func = button.textContent;
+                addModifier(func)
+            });
+        };
+    })
+}
+
+function addKeyboardEventListeners(){
+
+}
+
+function addNumber(num){
+    let workingNum
+
+    if (curr.length === 0 || 
+                    (!Number.isFinite(Number(curr[curr.length-1])) &&
+                    curr.at(-1).at(0) != "(")
+                ) {
+                    curr.push(num);
+                } else {
+                    workingNum = curr.pop();
+                    num += workingNum;
+                    curr.push(num);
+                }
+                displayCurr();
+}
+
+function addOperator(){
+
+    if (curr.length === 0 || operators.includes(curr.at(-1))) {
+                    alert("invalid format used")
+                } else {
+                    curr.push(func);
+                }
+                displayCurr();
+}
+
+function addModifier(mod){
+    switch (mod) {
+        case "C": 
+            curr = [];
+            currentDisplay.textContent = "0";
+            hx = "0";
+            historyDisplay.textContent = hx;
+            break;
+
+        case "()":
+            //Decides when to use ( or )
+            if (curr.length === 0) {
+                curr.push("(");
+            } else {
+                if(curr.at(-1).at(-1) === "(") {
+                    curr[curr.length-1] += "(";
+                }else if (!Number.isFinite(Number(curr.at(-1))) &&
+                    curr.at(-1).at(-1) != ")") {
+                        curr.push("x");
                         curr.push("(");
+                }else {
+                    const open = countOccurances(curr, "(");
+                    const close = countOccurances(curr, ")");
+                    if(open > close){
+                        curr[curr.length-1] += ")";
                     } else {
-                        if(curr.at(-1).at(-1) === "(") {
-                            curr[curr.length-1] += "(";
-                        }else if (!Number.isFinite(Number(curr.at(-1))) &&
-                             curr.at(-1).at(-1) != ")") {
-                                 curr.push("x");
-                                 curr.push("(");
-                        }else {
-                            const open = countOccurances(curr, "(");
-                            const close = countOccurances(curr, ")");
-                            if(open > close){
-                                curr[curr.length-1] += ")";
-                            } else {
-                                curr.push("x");
-                                curr.push("(");
-                            }
-                        }
+                        curr.push("x");
+                        curr.push("(");
                     }
-                    displayCurr();
+                }
+            }
+            displayCurr();
+            break;
+
+        case "%":
+            workingNum = curr.pop();
+
+            if (workingNum === undefined || 
+                workingNum === "0" || 
+                operators.includes(workingNum)){
+                    curr.push(workingNum)
+                    alert("Invalid Format Used")
                     break;
+            }else {
+                curr.push(workingNum + "%")
+            }
+            
+            displayCurr();
+            break;
 
-                case "%":
-                    workingNum = curr.pop();
+        case "+/-":
 
-                    if (workingNum === undefined || 
-                        workingNum === "0" || 
-                        operators.includes(workingNum)){
-                            curr.push(workingNum)
-                            alert("Invalid Format Used")
-                            break;
-                    }else {
-                        curr.push(workingNum + "%")
-                    }
-                    
-                    displayCurr();
-                    break;
+            //Check if element can become negative
+            if(operators.includes(curr.at(-1)) || 
+            curr.at(-1) === "0" || 
+            curr.length === 0) {
+                alert("Invalid Function");
+                break;
+            } 
+            
+            workingNum = curr.pop();
 
-                case "+/-":
+            //Check if number is negative
+            if(workingNum.at(0) === "-"){
+                
+                curr.push(workingNum.replace("-", ""));
+                displayCurr();
+                break;
+            }
 
-                    //Check if element can become negative
-                    if(operators.includes(curr.at(-1)) || 
-                    curr.at(-1) === "0" || 
-                    curr.length === 0) {
-                        alert("Invalid Function");
-                        break;
-                    } 
-                    
-                    workingNum = curr.pop();
+            //Makes last element negative
+            curr.push("-" + workingNum);
+            displayCurr();
+            break;
 
-                    //Check if number is negative
-                    if(workingNum.at(0) === "-"){
-                        
-                        curr.push(workingNum.replace("-", ""));
-                        displayCurr();
-                        break;
-                    }
+        case ".":
+            workingNum = curr.pop();
 
-                    //Makes last element negative
-                    curr.push("-" + workingNum);
-                    displayCurr();
-                    break;
+            if (workingNum === undefined || workingNum === "0"){
+                curr.push("0.")
+            } else if(workingNum.at(-1) === ")"){
+                curr.push(workingNum)
+                alert("Invalid Function")
+                break;
+            }else if(operators.includes(workingNum)){
+                curr.push(workingNum, "0.")
+            }else {curr.push(workingNum + ".")}
+            
+            displayCurr();
+            break;
 
-                case ".":
-                    workingNum = curr.pop();
-
-                    if (workingNum === undefined || workingNum === "0"){
-                        curr.push("0.")
-                    } else if(workingNum.at(-1) === ")"){
-                        curr.push(workingNum)
-                        alert("Invalid Function")
-                        break;
-                    }else if(operators.includes(workingNum)){
-                        curr.push(workingNum, "0.")
-                    }else {curr.push(workingNum + ".")}
-                    
-                    displayCurr();
-                    break;
-
-                case "=":
-                    hx = curr.join(" ")
-                    historyDisplay.textContent = hx;
-                    curr = calculate(curr)
-                    displayCurr();
-                default: 
-                    console.log(button.textContent);
-            }   
-        });
-    };
-})
+        case "=":
+            hx = curr.join(" ")
+            historyDisplay.textContent = hx;
+            curr = calculate(curr)
+            displayCurr();
+        default: 
+            console.log(button.textContent);
+    }
+}
 
 function displayCurr(){
     let display;
@@ -308,3 +332,7 @@ function parentheses(arr, index){
         arr.splice(index, (end - index)+1, nextArr[0].toString());
         return arr;
 }
+
+//Run initial setup
+addButtonEventListeners();
+addKeyboardEventListeners();
