@@ -230,9 +230,9 @@ function nextInOrder(arr) {
         next = arr.slice(index -1, index + 2)
         console.log(next[1])
         if(next[1] === "x"){
-            total = next[0]*next[2]
+            total = (next[0]*next[2]).toString();
         }else if (next[1] === "÷"){
-            total = next[0]/next[2]
+            total =(next[0]/next[2]).toString();
         } else alert(`There has been an issue with ${next[1]}`)
         
         arr.splice(index - 1, 3, total);
@@ -246,9 +246,9 @@ function nextInOrder(arr) {
         let next = arr.slice(index -1, index + 2)
 
         if(next[1] === "+"){
-            total = Number(next[0])+Number(next[2])
+            total = (Number(next[0])+Number(next[2])).toString();
         }else if (next[1] === "-"){
-            total = next[0]-next[2]
+            total = (next[0]-next[2]).toString();
         } else alert(`There has been an issue with ${next[1]}`)
         
         arr.splice(index - 1, 3, total);
