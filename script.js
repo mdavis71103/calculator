@@ -1,7 +1,7 @@
 /* Script */
 
 //declaring elements
-let hx, curr, workingNum, operators;
+let func, hx, curr, workingNum, operators;
 
 hx = "0";
 curr = [];
@@ -19,7 +19,7 @@ buttons.forEach((button) => {
 
     if(button.className === "num"){
         button.addEventListener("click", function() {
-            let func = button.textContent;
+            func = button.textContent;
             if (curr.length === 0 || 
                 (!Number.isFinite(Number(curr[curr.length-1])) &&
                 curr.at(-1).at(0) != "(")
@@ -34,8 +34,8 @@ buttons.forEach((button) => {
         })
     } else if (button.className === "operator") {
         button.addEventListener("click", function(){
-            let func = button.textContent;
-            if (curr.length === 0) {
+            func = button.textContent;
+            if (curr.length === 0 || operators.includes(curr.at(-1))) {
                 alert("invalid format used")
             } else {
                 curr.push(func);
