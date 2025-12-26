@@ -157,7 +157,6 @@ function displayCurr(){
 function calculate(arr){
     //Takes arr and returns answer
     let total;
-    total = []
 
     //Seperate multiple parentheses without altering display
     for(let i = 0; i < arr.length; i++){
@@ -172,11 +171,14 @@ function calculate(arr){
     }
 
     //Calculates one step at a time to ensure Order of Operations is followed
-    while (arr.length > 1 || arr.at(-1).at(-1) === "%"){
-        arr = nextInOrder(arr);
+    if(!Number.isInteger(arr)){
+        while((Array.isArray(arr) && arr.length > 1) || arr.at(-1).at(-1) === "%"){
+            arr = nextInOrder(arr);
+        }
     }
 
-    total.push(String(arr));
+    total = [];
+    total.push((Math.round(arr * 100000) / 100000).toString());
     return total;
 }
 
@@ -194,13 +196,13 @@ function nextInOrder(arr) {
     }
 
     //percent
-    index = arr.findIndex(op => op.toString().at(-1) === "%")
+    index = arr.findIndex(op => op.toString().at(-1).at(-1) === "%")
     if(index != -1){
         if(arr.length === 1){
             console.log("Percent")
             workingNum = arr.pop();
             workingNum = workingNum.replace("%", "");
-            workingNum = workingNum * 0.1;
+            workingNum = workingNum * 0.01;
             arr.push(workingNum.toString());
             return arr;
         }else{
