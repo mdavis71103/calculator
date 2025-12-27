@@ -1,11 +1,13 @@
 /* Script */
 
 //declaring elements
-let func, hx, curr, workingNum, operators;
+let func, hx, curr, workingNum;
 
 hx = "0";
 curr = [];
-operators = ["+", "-", "x", "÷", "(", ")"];
+const operators = ["+", "-", "x", "÷", "(", ")", "*", "/"];
+const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+const modifiers = [".", "F9", "%", "Enter", "Delete"]
 
 
 //declaring buttons and Displays
@@ -40,7 +42,31 @@ function addButtonEventListeners(){
 }
 
 function addKeyboardEventListeners(){
+    document.addEventListener("keydown", function(event){
+        console.log(event.key);
 
+        if(numbers.includes(event.key)){
+            addNumber(event.key);
+        } else if(operators.includes(event.key)){
+            if(event.key === "*"){
+                addOperator("x");
+            }else if(event.key === "/"){
+                addOperator("÷");
+            }else {
+                addOperator(event.key);
+            }
+        } else if(modifiers.includes(event.key)){
+            if(event.key === "Enter"){
+                addModifier("=")
+            } else if (event.key === "F9"){
+                addModifier("+/-")
+            } else if (event.key === "Delete"){
+                addModifier("C")
+            } else{
+                addModifier(event.key);
+            } 
+        }
+    })
 }
 
 function addNumber(num){
@@ -53,18 +79,18 @@ function addNumber(num){
                     curr.push(num);
                 } else {
                     workingNum = curr.pop();
-                    num += workingNum;
-                    curr.push(num);
+                    workingNum += num;
+                    curr.push(workingNum);
                 }
                 displayCurr();
 }
 
-function addOperator(){
+function addOperator(op){
 
     if (curr.length === 0 || operators.includes(curr.at(-1))) {
                     alert("invalid format used")
                 } else {
-                    curr.push(func);
+                    curr.push(op);
                 }
                 displayCurr();
 }
@@ -165,8 +191,9 @@ function addModifier(mod){
             historyDisplay.textContent = hx;
             curr = calculate(curr)
             displayCurr();
+            break;
         default: 
-            console.log(button.textContent);
+            console.log(`Defaulted to ${mod}`);
     }
 }
 
