@@ -97,7 +97,7 @@ function addOperator(op){
 function addModifier(mod){
     switch (mod) {
         case "C": 
-            hx = curr;
+            hx = curr.join(" ");
             historyDisplay.textContent = hx;
             curr = [];
             currentDisplay.textContent = "0";
@@ -291,6 +291,10 @@ function nextInOrder(arr) {
         if(next[1] === "x"){
             total = (next[0]*next[2]).toString();
         }else if (next[1] === "÷"){
+            if(next[2] === "0"){
+                alert("Not today Satan")
+                return arr = [];
+            }
             total =(next[0]/next[2]).toString();
         } else alert(`There has been an issue with ${next[1]}`)
         
