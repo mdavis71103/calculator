@@ -3,7 +3,6 @@
 //declaring elements
 let func, hx, curr, workingNum;
 
-hx = "0";
 curr = [];
 const operators = ["+", "-", "x", "÷", "(", ")", "*", "/"];
 const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
@@ -43,8 +42,6 @@ function addButtonEventListeners(){
 
 function addKeyboardEventListeners(){
     document.addEventListener("keydown", function(event){
-        console.log(event.key);
-
         if(numbers.includes(event.key)){
             addNumber(event.key);
         } else if(operators.includes(event.key)){
@@ -74,10 +71,12 @@ function addNumber(num){
 
     if (curr.length === 0 || 
                     (!Number.isFinite(Number(curr[curr.length-1])) &&
-                    curr.at(-1).at(0) != "(")
-                ) {
+                    curr.at(-1).at(0) != "(" && curr.at(-1).at(-1) != ")")) 
+                {
                     curr.push(num);
-                } else {
+                }else if(curr.at(-1).at(-1) === ")"){
+                    curr.push("x", num);
+                } else{
                     workingNum = curr.pop();
                     workingNum += num;
                     curr.push(workingNum);
@@ -98,21 +97,24 @@ function addOperator(op){
 function addModifier(mod){
     switch (mod) {
         case "C": 
+            hx = curr;
+            historyDisplay.textContent = hx;
             curr = [];
             currentDisplay.textContent = "0";
-            hx = "0";
-            historyDisplay.textContent = hx;
             break;
 
         case "()":
             //Decides when to use ( or )
-            if (curr.length === 0) {
+            if (curr.length === 0 || operators.includes(curr.at(-1))) {
+                //If curr is empty or last element is an operator
                 curr.push("(");
             } else {
                 if(curr.at(-1).at(-1) === "(") {
+                    //If last element is an open parenthese
                     curr[curr.length-1] += "(";
                 }else if (!Number.isFinite(Number(curr.at(-1))) &&
                     curr.at(-1).at(-1) != ")") {
+                        //If last element is not a number and not a closing parenthese
                         curr.push("x");
                         curr.push("(");
                 }else {
@@ -256,21 +258,27 @@ function nextInOrder(arr) {
             workingNum = workingNum * 0.01;
             arr.push(workingNum.toString());
             return arr;
-        }else{
-            switch(arr.at(-1)){
+        }else if(arr.length === 3){
+            arr.push(arr.pop().replace("%", ""))
+            switch(arr.at(1)){
                 case "+":
-                    console.log("Plus");
-                    return arr;
+                    workingNum = Number(arr[0]) + arr[2] * 0.01 * arr[0]
+                    return arr = [workingNum.toString()]
                 case "-":
-                    console.log("Minus");
-                    return arr;
+                    workingNum = Number(arr[0]) - arr[2] * 0.01 * arr[0]
+                    return arr = [workingNum.toString()]
                 case "x":
                     console.log("Multiply");
-                    return arr;
+                    workingNum = arr[2] * 0.01 * arr[0]
+                    return arr = [workingNum.toString()]
                 case "÷":
                     console.log("Divide");
-                    return arr;
+                    workingNum = arr[0] / (arr[2] * 0.01)
+                    return arr = [workingNum.toString()]
             }
+        } else {
+            alert("Error")
+            return arr;
         }
     }
     
