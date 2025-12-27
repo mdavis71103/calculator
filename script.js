@@ -6,7 +6,7 @@ let func, hx, curr, workingNum;
 curr = [];
 const operators = ["+", "-", "x", "÷", "(", ")", "*", "/"];
 const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
-const modifiers = [".", "F9", "%", "Enter", "Delete"]
+const modifiers = [".", "F9", "%", "Enter", "Delete", "Backspace"]
 
 
 //declaring buttons and Displays
@@ -96,6 +96,19 @@ function addOperator(op){
 
 function addModifier(mod){
     switch (mod) {
+        case "Backspace":
+            if(curr.length === 0){
+                break;
+            } else if(curr.at(-1).length === 1){
+                curr.pop();
+                displayCurr();
+                break;
+            } else if(curr.at(-1).length > 1){
+                workingNum = curr.pop();
+                curr.push(workingNum.slice(0, -1))
+                displayCurr();
+                break;
+            } else break;
         case "C": 
             hx = curr.join(" ");
             historyDisplay.textContent = hx;
