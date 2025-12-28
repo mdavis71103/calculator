@@ -1,9 +1,10 @@
 /* Script */
 
 //declaring elements
-let func, hx, curr, workingNum;
+let func, hx, curr, workingNum, calculated;
 
 curr = [];
+calculated = false;
 const operators = ["+", "-", "x", "÷", "(", ")", "*", "/"];
 const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 const modifiers = [".", "F9", "%", "Enter", "Delete", "Backspace"]
@@ -69,23 +70,28 @@ function addKeyboardEventListeners(){
 function addNumber(num){
     let workingNum
 
-    if (curr.length === 0 || 
-                    (!Number.isFinite(Number(curr[curr.length-1])) &&
-                    curr.at(-1).at(0) != "(" && curr.at(-1).at(-1) != ")")) 
-                {
-                    curr.push(num);
-                }else if(curr.at(-1).at(-1) === ")"){
-                    curr.push("x", num);
-                } else{
-                    workingNum = curr.pop();
-                    workingNum += num;
-                    curr.push(workingNum);
-                }
-                displayCurr();
+    if (calculated === true){
+        hx = curr.join(" ")
+        historyDisplay.textContent = hx;
+        curr = [num.toString()]
+        calculated = false;
+    }else if (curr.length === 0 || 
+        (!Number.isFinite(Number(curr[curr.length-1])) &&
+        curr.at(-1).at(0) != "(" && curr.at(-1).at(-1) != ")")) {
+            curr.push(num);
+        }else if(curr.at(-1).at(-1) === ")"){
+            curr.push("x", num);
+        } else{
+            workingNum = curr.pop();
+            workingNum += num;
+            curr.push(workingNum);
+        }
+        displayCurr();
 }
 
 function addOperator(op){
 
+    calculated = false;
     if (curr.length === 0 || operators.includes(curr.at(-1))) {
                     alert("invalid format used")
                 } else {
@@ -95,6 +101,9 @@ function addOperator(op){
 }
 
 function addModifier(mod){
+
+    calculated = false;
+
     switch (mod) {
         case "Backspace":
             if(curr.length === 0){
@@ -202,10 +211,15 @@ function addModifier(mod){
             break;
 
         case "=":
+            if(curr.at(-1).length === 1 && operators.includes(curr.at(-1))){
+                alert("Incorrect Format");
+                break;
+            }
             hx = curr.join(" ")
             historyDisplay.textContent = hx;
             curr = calculate(curr)
             displayCurr();
+            calculated = true;
             break;
         default: 
             console.log(`Defaulted to ${mod}`);
@@ -306,7 +320,7 @@ function nextInOrder(arr) {
         }else if (next[1] === "÷"){
             if(next[2] === "0"){
                 alert("Not today Satan")
-                return arr = [];
+                return arr = ["0"];
             }
             total =(next[0]/next[2]).toString();
         } else alert(`There has been an issue with ${next[1]}`)
