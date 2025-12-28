@@ -1,8 +1,9 @@
 /* Script */
 
 //declaring elements
-let func, hx, curr, workingNum, calculated;
+let func, hx, curr, display, workingNum, calculated;
 
+//assigning elements
 curr = [];
 calculated = false;
 const operators = ["+", "-", "x", "÷", "(", ")", "*", "/"];
@@ -11,7 +12,6 @@ const modifiers = [".", "F9", "%", "Enter", "Delete", "Backspace"]
 
 
 //declaring buttons and Displays
-
 const historyDisplay = document.querySelector("#historyDiv p");
 const currentDisplay = document.querySelector("#currentDiv p");
 const buttons = document.querySelectorAll("button");
@@ -42,6 +42,7 @@ function addButtonEventListeners(){
 }
 
 function addKeyboardEventListeners(){
+    //Adds keyboard listeners and converts input to fit calc buttons
     document.addEventListener("keydown", function(event){
         if(numbers.includes(event.key)){
             addNumber(event.key);
@@ -68,9 +69,12 @@ function addKeyboardEventListeners(){
 }
 
 function addNumber(num){
+    //Takes number used and pushes if appropriate
+
     let workingNum
 
     if (calculated === true){
+        //Checks if current curr is a total, moves it to hx if true
         hx = curr.join(" ")
         historyDisplay.textContent = hx;
         curr = [num.toString()]
@@ -78,10 +82,13 @@ function addNumber(num){
     }else if (curr.length === 0 || 
         (!Number.isFinite(Number(curr[curr.length-1])) &&
         curr.at(-1).at(0) != "(" && curr.at(-1).at(-1) != ")")) {
+            //Checks for open parentheses
             curr.push(num);
         }else if(curr.at(-1).at(-1) === ")"){
+            //checks for closed parentheses
             curr.push("x", num);
         } else{
+            //appends number to last element
             workingNum = curr.pop();
             workingNum += num;
             curr.push(workingNum);
@@ -90,6 +97,7 @@ function addNumber(num){
 }
 
 function addOperator(op){
+    //Takes operator used and checks format before push
 
     calculated = false;
     if (curr.length === 0 || operators.includes(curr.at(-1))) {
@@ -101,6 +109,7 @@ function addOperator(op){
 }
 
 function addModifier(mod){
+    //Takes modifier button used and performs specified function of each
 
     calculated = false;
 
@@ -227,7 +236,8 @@ function addModifier(mod){
 }
 
 function displayCurr(){
-    let display;
+    //Displays curr on calc screen
+    
     
     if(curr.length > 1){display = curr.join(" ");}
     else {display = curr;}
@@ -235,7 +245,7 @@ function displayCurr(){
 }
 
 function calculate(arr){
-    //Takes arr and returns answer
+    //Takes array and returns answer in array
     let total;
 
     //Seperate multiple parentheses without altering display
@@ -257,6 +267,7 @@ function calculate(arr){
         }
     }
 
+    //returns total as string in array rounded to 5 decimals
     total = [];
     total.push((Math.round(arr * 100000) / 100000).toString());
     return total;
@@ -351,12 +362,14 @@ function countOccurances(arr, char){
 //For finding which parentheses to use
 //Takes array and char to count
 //Returns total of char in array
-    let total = 0
+    let total;
+
+    total = 0;
 
     arr.forEach(e => {
-        let splitArr = e.toString().split(char)
-        total += (splitArr.length - 1)
-    })
+        let splitArr = e.toString().split(char);
+        total += (splitArr.length - 1);
+    });
 
     return total;
 }
@@ -399,6 +412,6 @@ function parentheses(arr, index){
         return arr;
 }
 
-//Run initial setup
+//Run initial setup for listeners
 addButtonEventListeners();
 addKeyboardEventListeners();
